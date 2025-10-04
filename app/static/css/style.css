@@ -1,0 +1,113 @@
+body {
+    display: flex;
+    flex-direction: column;
+    
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+    color: #333; 
+}
+
+header {
+    position: fixed;
+    top: 0px;
+
+    width: 100%;
+    height: calc(1rem + 12px);
+    
+    color: #fff;
+    line-height: calc(1rem + 12px);
+    font-family: Georgia, serif;
+    
+    background-color: #000;
+
+    overflow: hidden;
+    z-index: 1000; /* always on top (above chat) */
+    
+    nav {
+        display: flex;
+        gap: 12px;
+    }
+
+    a:link, a:visited, a:active {
+      color: #fff; /* keeping links white */
+      text-decoration: none; /* removing the underlines */
+    }
+
+    nav a:hover {
+        text-decoration: underline;
+    }
+}
+
+.page-wrapper {
+    flex-grow: 1; /* main takes all the empty space */
+
+    margin-top: calc(1rem + 12px); /* making space for the header */
+    padding: 24px 6px;
+        
+}
+
+main {
+    max-width: 806px; /* 800 with padding */
+    margin: 0 auto;
+
+    h1 {
+        text-align: center;
+    }
+}
+
+footer {
+    width: 100%;
+    height: calc(1rem + 12px);
+    
+    color: #ccc;
+    font-size: 0.8rem;
+    
+    line-height: calc(1rem + 12px);
+    background-color: #000;
+
+    overflow: hidden;
+    
+    .contact {
+        display: flex;
+        gap: 6px;
+
+        a:link, a:visited, a:active, a:hover {
+            color: #ccc;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #fff;
+        }
+    }
+}
+
+/* gridbar3 is for the header and the footer */
+.gridbar3 {
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+    align-items: center;
+    
+    max-width: 806px; /* 800 with padding */
+    padding: 0 6px;
+    margin: 0 auto;
+}
+
+.gridbar3-1 {
+    grid-column: 1;
+}
+
+.gridbar3-2 {
+    grid-column: 2;
+    text-align: center;
+    padding: 0 24px;
+}
+
+.gridbar3-3 {
+    grid-column: 3;
+    text-align: end;
+}
+

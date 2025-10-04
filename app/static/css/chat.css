@@ -1,0 +1,95 @@
+.chat-frame {
+    display: flex;
+    flex-direction: column;
+    
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+
+    width: clamp(0px, calc(100% - 24px), 350px);
+    height: clamp(0px, calc(100vh - 24px - 1rem - 12px), 500px);
+
+    background-color: rgba(200, 200, 200, 0.5);
+    backdrop-filter: blur(7px);
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+    color: #fff;
+    
+    overflow: hidden;
+    z-index: 900;
+}
+
+.chat-header {
+    color: #333;
+    padding: 6px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.chat-messages {
+    flex: 1 1 auto;
+    color: white;
+    padding: 0.5rem 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+}
+
+.chat-message {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    max-width: 80%;
+}
+
+.chat-message.bot {
+    background-color: #333;
+    align-self: flex-start;
+}
+
+.chat-message.user {
+    background-color: #660000;
+    align-self: flex-end;
+}
+
+.chat-prompt {
+    display: flex;
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+
+.chat-prompt input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+}
+
+.chat-prompt button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #660000;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.chat-prompt button:hover {
+    background-color: #4d0000;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 3px;
+}
+

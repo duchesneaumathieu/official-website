@@ -1,0 +1,55 @@
+# -----------------------------
+# Python bytecode and cache
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+venv/
+env/
+.venv/
+
+# -----------------------------
+# Distribution / packaging
+# -----------------------------
+build/
+dist/
+*.egg-info/
+*.whl
+
+# -----------------------------
+# Logs
+# -----------------------------
+*.log
+
+# -----------------------------
+# IDEs / editors
+# -----------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# -----------------------------
+# Docker-related (local files)
+# -----------------------------
+*.env          # If you store env files locally
+docker-compose.override.yml
+
+# -----------------------------
+# Jupyter / notebooks
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# Pytest / coverage
+# -----------------------------
+htmlcov/
+.coverage
+.pytest_cache/
+
