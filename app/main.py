@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from datetime import datetime
 from pathlib import Path
 
@@ -10,9 +11,12 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 VERSION_FILE = BASE_DIR.parent / "VERSION"
 
-
 # Create FastAPI app
 app = FastAPI(title="My Official Website")
+
+# TODO trusted_hosts=<website name>
+# Make url_for() generate HTTPS links behind a reverse proxy
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 # Mount static files (CSS, JS, images)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
