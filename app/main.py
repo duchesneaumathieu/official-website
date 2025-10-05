@@ -5,17 +5,20 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from datetime import datetime
 from pathlib import Path
 
-VERSION_FILE = Path(__file__).parent.parent / "VERSION"
+BASE_DIR = Path(__file__).resolve().parent
+TEMPLATES_DIR = BASE_DIR / "templates"
+STATIC_DIR = BASE_DIR / "static"
+VERSION_FILE = BASE_DIR.parent / "VERSION"
 
 
 # Create FastAPI app
-app = FastAPI(title="My Portfolio Website")
+app = FastAPI(title="My Official Website")
 
 # Mount static files (CSS, JS, images)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Setup templates directory
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 def app_version():
     if VERSION_FILE.exists():
@@ -58,7 +61,7 @@ async def get(request: Request, lang: str, page: str):
         "other_lang_path": f"{other_lang}/{page}",
     }
 
-    if not Path(f"templates/{page}.html").exists():
+    if not (TEMPLATES_DIR / f"{page}.html").exists():
         return templates.TemplateResponse("under-construction.html", context)
         
     return templates.TemplateResponse(f"{page}.html", context)
