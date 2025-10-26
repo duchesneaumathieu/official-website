@@ -1,0 +1,10 @@
+{
+    "lang": "fr",
+    "blog": "Blogue",
+    "switch": "English",
+    "chatbot": {
+        "title": "Mon Chatbot",
+        "greeting": "Bonjour! Je suis disponible pour répondre à toutes questions sur Mathieu. Comment puis-je vous aider?",
+        "send": "Envoyer"
+    }
+}

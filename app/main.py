@@ -1,72 +1,71 @@
+import json
+from enum import Enum
+from datetime import datetime
+from pathlib import PurePosixPath
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-from datetime import datetime
-from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-TEMPLATES_DIR = BASE_DIR / "templates"
-STATIC_DIR = BASE_DIR / "static"
-VERSION_FILE = BASE_DIR.parent / "VERSION"
+from .resource import Resource, sanitize_url_path
+from .lang import select_accept_language
+from .constants import CONFIG, TEMPLATES_DIR, CONTENTS_DIR, STATIC_DIR, LOCALES_DIR, SERVICES_DATA, APP_VERSION
 
-# Create FastAPI app
-app = FastAPI(title="My Official Website")
+app = FastAPI(title=CONFIG["APP_TITLE"])
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# TODO trusted_hosts=<website name>
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
 # Make url_for() generate HTTPS links behind a reverse proxy
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
-# Mount static files (CSS, JS, images)
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-
-# Setup templates directory
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
-
-def app_version():
-    if VERSION_FILE.exists():
-        return VERSION_FILE.read_text().strip()
-    return "0.0.0"
-
 templates.env.globals["current_year"] = lambda: datetime.now().year
-templates.env.globals["app_version"] = app_version
+templates.env.globals["app_version"] = lambda: APP_VERSION
 
-# TODO: user language redirect
-# /, /home --> /user-lang/home (default en)
-# /path --> /user-lang/path (default en)
+def swap_lang(lang, url_path):
+    new_lang = "fr" if lang == "en" else "en"
+    return new_lang / url_path.relative_to(lang)
 
-PAGES = ["home", "blog", "grafana", "mlflow"]
-LANGUAGES = ['en', 'fr']
+def load_locale(path: str):
+    with open(LOCALES_DIR / path, 'r') as f:
+        return json.load(f)
 
-@app.get("/", response_class=HTMLResponse)
-async def redirect_home(request: Request):
-    return RedirectResponse(url="/en/home", status_code=307)
+@app.get("/{raw_path:path}", response_class=HTMLResponse)
+async def serve(request: Request, raw_path: str):
+    url_path = sanitize_url_path(raw_path) if raw_path else PurePosixPath("home")
+    if url_path.parts[0] in CONFIG["LANGUAGES"]:
+        lang = url_path.parts[0]
+    else:
+        lang = select_accept_language(request)
+        url_path = lang / url_path
+    
+    resource = Resource(url_path)
 
-@app.get("/{string}", response_class=HTMLResponse)
-async def redirect(request: Request, string: str):
-    if string in LANGUAGES:
-        return RedirectResponse(url=f"/{string}/home", status_code=307)
-    return RedirectResponse(url=f"/en/{string}", status_code=307)
-
-# Home page route
-@app.get("/{lang}/{page}", response_class=HTMLResponse)
-async def get(request: Request, lang: str, page: str):
-    if lang not in LANGUAGES or page not in PAGES:
-        raise HTTPException(status_code=404, detail="Page not found")
-
-    other_lang = 'fr' if lang=='en' else 'en'
-    other_language = "Français" if lang=='en' else "English"
+    redirect = raw_path != str(url_path)
+    alt_url_path = swap_lang(lang, url_path)
+    content_found = resource.exists() or Resource(alt_url_path).exists()
+    
+    if redirect and content_found:
+        return RedirectResponse(url=f"/{url_path}", status_code=307)
     
     context = {
         "request": request,
-        "lang": lang,
-        "other_language": other_language,
-        "other_lang_path": f"{other_lang}/{page}",
+        "locale": load_locale(f"{lang}/base.json"),
+        "services": SERVICES_DATA,
     }
+    context["locale"]["switch_href"] = alt_url_path
+    if resource.exists():
+        context["content"] = resource.html()
+        return templates.TemplateResponse("content.html", context, status_code=200)
 
-    if not (TEMPLATES_DIR / f"{page}.html").exists():
-        return templates.TemplateResponse("under-construction.html", context)
-        
-    return templates.TemplateResponse(f"{page}.html", context)
-
+    if content_found:
+        # 404 with a switch language alternative
+        context["locale"]["e404"] = load_locale(f"{lang}/alt_404.json")
+        context["locale"]["e404"]["href"] = alt_url_path
+    else:
+        # Load the standard 404 locale
+        context["locale"]["e404"] = load_locale(f"{lang}/404.json")
+        context["locale"]["e404"]["href"] = f"{lang}/home"
+    
+    return templates.TemplateResponse("404.html", context, status_code=404)

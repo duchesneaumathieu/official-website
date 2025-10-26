@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <!-- templates/base.html -->
-<html lang="en">
+<html lang={{ locale.lang }}>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mathieu Duchesneau - Resume and Portfolio{% endblock %}</title>
+    <meta id="chatbot-url" name="chatbot-url" content="{{ services.chatbot.url }}">
+    <title>{% block title %}Mathieu Duchesneau{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="/static/icons/favicon.ico">
     <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="/static/css/chat.css">
+    <link rel="stylesheet" href="/static/css/partial.css">
+    {% block head %}<link rel="stylesheet" href="/static/css/default.css">{% endblock %}
 </head>
 <body>
     {% include "partials/header.html" %}
@@ -23,4 +25,3 @@
     <script src="/static/js/script.js"></script>
 </body>
 </html>
-

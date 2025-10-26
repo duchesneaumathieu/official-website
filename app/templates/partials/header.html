@@ -1,17 +1,17 @@
 <header>
     <div class="gridbar3">
         <div class="trademark gridbar3-1">
-            <a href="/{{ lang }}/home">Mathieu Duchesneau</a>
+            <a href="/{{ locale.lang }}/home">Mathieu Duchesneau</a>
         </div>
 
         <nav class="gridbar3-2">
-            <a href="/{{ lang }}/blog">Blog</a>
-            <a href="/{{ lang }}/grafana">Grafana</a>
-            <a href="/{{ lang }}/mlflow">MLflow</a>
+            <a href="/{{ locale.lang }}/blog">{{ locale.blog }}</a>
+            <a href="{{ services.grafana.url }}" target="_blank" rel="noopener noreferrer">Grafana</a>
+            <a href="{{ services.mlflow.url }}" target="_blank" rel="noopener noreferrer">MLflow</a>
         </nav>
 
         <div class="language-toggle gridbar3-3">
-            <a href="/{{ other_lang_path }}/"> {{ other_language }} </a>
+            <a href="/{{ locale.switch_href }}"> {{ locale.switch }} </a>
         </div>
     </div>
 </header>

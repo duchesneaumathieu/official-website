@@ -1,0 +1,19 @@
+{
+    "APP_TITLE": "Official Website",
+    "LANGUAGES": ["en", "fr"],
+    "MAIN_PAGES": ["home", "blog"],
+    "SERVICES": ["chatbot", "grafana", "mlflow"],
+    "MARKDOWN": {"extras": ["metadata", "markdown-in-html", "fenced-code-blocks", "latex", "wiki-tables"]},
+    "URL": {
+        "FORBIDDEN_STRINGS": ["\\", "..", "%2e%2e"],
+        "FORBIDDEN_NODES": ["", ".", "..", "index"],
+        "ALLOWED_SPECIAL": "/-?=&",
+        "MAX_LENGTH": 256,
+        "MAX_DEPTH": 5
+    },
+    "LRU_CACHE": {
+        "html_cache": {"maxsize": 128},
+        "markdown_cache": {"maxsize": 128},
+        "sanitize_url_path": {"maxsize": 256}
+    }
+}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ locale.e404.title }}{% endblock %}
+
+{% block main %}
+<h1>{{ locale.e404.h1 | safe }}</h1>
+<p>{{ locale.e404.p | safe }}</p>
+<a href="/{{ locale.e404.href }}">{{ locale.e404.a | safe}}</a>
+{% endblock %}

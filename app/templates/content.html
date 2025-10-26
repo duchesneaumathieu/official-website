@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }}{% endblock %}
+{% block head %}
+    {% if content.head is defined %}
+        {{ content.head | safe }}
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock %}
+{% block main %}{{ content.html | safe }}{% endblock %}

@@ -1,0 +1,10 @@
+{
+    "lang": "en",
+    "blog": "Blog",
+    "switch": "Français",
+    "chatbot": {
+        "title": "My Chatbot",
+        "greeting": "Hello! I'm here to answer any question about Mathieu. How can I help you?",
+        "send": "Send"
+    }
+}

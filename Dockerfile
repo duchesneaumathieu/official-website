@@ -28,7 +28,10 @@ COPY VERSION LICENSE ./
 # ---------- Runtime configuration ----------
 # HOST and PORT can be overridden at runtime if needed
 ENV HOST=0.0.0.0 \
-    PORT=8000
+    PORT=8000 \
+    SERVICES_CHATBOT_URL="/services/chatbot/" \
+    SERVICES_GRAFANA_URL="/services/grafana/" \
+    SERVICES_MLFLOW_URL="/services/mlflow/"
 
 EXPOSE ${PORT}
 
