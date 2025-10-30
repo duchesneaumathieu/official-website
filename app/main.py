@@ -10,31 +10,33 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from .resource import Resource, sanitize_url_path
 from .lang import select_accept_language
-from .constants import CONFIG, TEMPLATES_DIR, CONTENTS_DIR, STATIC_DIR, LOCALES_DIR, SERVICES_DATA, APP_VERSION
+from .config import Settings
 
-app = FastAPI(title=CONFIG["APP_TITLE"])
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app = FastAPI(title=Settings.general.app_title)
 
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
+if Settings.general.serve_static:
+    app.mount("/static", StaticFiles(directory=Settings.paths.static_dir), name="static")
+
+templates = Jinja2Templates(directory=Settings.paths.templates_dir)
 
 # Make url_for() generate HTTPS links behind a reverse proxy
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 templates.env.globals["current_year"] = lambda: datetime.now().year
-templates.env.globals["app_version"] = lambda: APP_VERSION
+templates.env.globals["app_version"] = lambda: Settings.general.app_version
 
 def swap_lang(lang, url_path):
     new_lang = "fr" if lang == "en" else "en"
     return new_lang / url_path.relative_to(lang)
 
 def load_locale(path: str):
-    with open(LOCALES_DIR / path, 'r') as f:
+    with open(Settings.paths.locales_dir / path, 'r') as f:
         return json.load(f)
 
 @app.get("/{raw_path:path}", response_class=HTMLResponse)
 async def serve(request: Request, raw_path: str):
     url_path = sanitize_url_path(raw_path) if raw_path else PurePosixPath("home")
-    if url_path.parts[0] in CONFIG["LANGUAGES"]:
+    if url_path.parts[0] in Settings.general.languages:
         lang = url_path.parts[0]
     else:
         lang = select_accept_language(request)
@@ -52,7 +54,7 @@ async def serve(request: Request, raw_path: str):
     context = {
         "request": request,
         "locale": load_locale(f"{lang}/base.json"),
-        "services": SERVICES_DATA,
+        "services": Settings.services,
     }
     context["locale"]["switch_href"] = alt_url_path
     if resource.exists():

@@ -2,47 +2,40 @@ import os, string, functools, markdown2
 from pathlib import Path, PurePosixPath
 from fastapi import Request
 from cachetools import LRUCache
-from .constants import CONFIG, MARKDOWN_DIR
+from .config import Settings
 
-ALLOWED_CHARS = string.ascii_letters + string.digits + CONFIG["URL"]["ALLOWED_SPECIAL"]
-
-html_cache = LRUCache(**CONFIG["LRU_CACHE"]["html_cache"])
-markdown_cache = LRUCache(**CONFIG["LRU_CACHE"]["markdown_cache"])
+html_cache = LRUCache(**Settings.cache.html_cache)
+markdown_cache = LRUCache(**Settings.cache.markdown_cache)
 
 class PathTraversalAttack(Exception):
     pass
 
-@functools.lru_cache(**CONFIG["LRU_CACHE"]["sanitize_url_path"])
-def sanitize_url_path(url_path: str,
-    max_length: int = CONFIG["URL"]["MAX_LENGTH"],
-    max_depth: int = CONFIG["URL"]["MAX_DEPTH"],
-    allowed_chars: str = ALLOWED_CHARS,
-    forbidden_strings: list[str] = CONFIG["URL"]["FORBIDDEN_STRINGS"],
-    forbidden_nodes: list[str] = CONFIG["URL"]["FORBIDDEN_NODES"]) -> PurePosixPath:
+@functools.lru_cache(**Settings.cache.sanitize_url_path)
+def sanitize_url_path(url_path: str) -> PurePosixPath:
 
-    if len(url_path) > max_length:
+    if len(url_path) > Settings.url_rules.max_length:
         raise ValueError("URL is too long")
     
-    if any(s in url_path for s in forbidden_strings):
+    if any(s in url_path for s in Settings.url_rules.forbidden_strings):
         raise PathTraversalAttack()
     
     # Silently removing not allowed characters
-    url_path = "".join(c for c in url_path if c in allowed_chars).lower()
+    url_path = "".join(c for c in url_path if c in Settings.url_rules.allowed_characters).lower()
     
     # Silently removing forbidden nodes
-    nodes = [node for node in url_path.split('/') if node not in forbidden_nodes]
+    nodes = [node for node in url_path.split('/') if node not in Settings.url_rules.forbidden_nodes]
     
-    if len(nodes) > max_depth:
+    if len(nodes) > Settings.url_rules.max_depth:
         raise ValueError("URL is too deep")
     
     return PurePosixPath(*nodes)
 
 def secure_resource_resolve(url_path: Path, strict: bool = False) -> Path:
     # Can raise FileNotFoundError when strict=True
-    resolved = (MARKDOWN_DIR / url_path).resolve(strict=strict)
+    resolved = (Settings.paths.markdown_dir / url_path).resolve(strict=strict)
     
     try:
-        relative = resolved.relative_to(MARKDOWN_DIR)
+        relative = resolved.relative_to(Settings.paths.markdown_dir)
     except ValueError:
         raise PathTraversalAttack(url_path)
     
@@ -104,7 +97,7 @@ class Resource:
     @mtime_lru_cache(html_cache)
     def html(self) -> dict:
         markdown = self.markdown()
-        html = markdown2.markdown(markdown, **CONFIG["MARKDOWN"])
+        html = markdown2.markdown(markdown, extras=Settings.markdown.extras)
         
         if html.metadata.get("usage") != "content":
             raise RuntimeError("File is not content")

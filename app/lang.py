@@ -1,5 +1,5 @@
 from fastapi import Request
-from .constants import CONFIG
+from .config import Settings
 
 def retrieve_language_quality(encoding):
     try: return float(encoding.split("=")[1])
@@ -12,7 +12,7 @@ def select_accept_language(request: Request):
     for encoding in accept_language.split(","):
         # Ignore location 
         language = encoding.split(";")[0].split("-")[0]
-        if language not in CONFIG["LANGUAGES"]:
+        if language not in Settings.general.languages:
             continue
         quality = retrieve_language_quality(encoding)
         if language not in qualities or qualities[language] < quality:

@@ -47,13 +47,18 @@ class Messages {
     async push_stream(role, stream) {
         let content = "";
         const message = this.displayMessage(role, "");
-        for await (const delta of stream) {
-            content += delta
-            message.textContent += delta;
-            this.focus_last();
+        try {
+            for await (const delta of stream) {
+                content += delta;
+                message.textContent += delta;
+                this.focus_last();
+            }
+            this.messages.push({role: role, content: content});
+        } catch (err) {
+            this.container.removeChild(message);
+            this.displayMessage("error", "Something went wrong. Please refresh the page and try again.");
+            throw err;
         }
-      
-        this.messages.push({role: role, content: content})
     }
 }
 
@@ -63,9 +68,10 @@ class ChatbotAPI {
         this.chat_button = document.getElementById('chat-button');
         this.messages = new Messages();
 
-        this.base_url = document.getElementById("chatbot-url").content
-        this.models_url = new URL("v1/models", this.base_url).href;
-        this.completions_url = new URL("v1/chat/completions", this.base_url).href;
+        const regex = new RegExp("\/*$");
+        this.base_url = document.getElementById("chatbot-url").content.replace(regex, '/')
+        this.models_url = this.base_url + "v1/models";
+        this.completions_url = this.base_url + "v1/chat/completions";
         this.name = null;
         this.ready = false;
 
@@ -84,7 +90,7 @@ class ChatbotAPI {
             this.name = path.split("/").pop().replace(/\.[^.]+$/, "");
             this.ready = true;
         } catch (err) {
-            console.error("Failed to fetch model info:", err); 
+            console.error("Failed to fetch model info:", err);
         }
     }
 
@@ -96,7 +102,14 @@ class ChatbotAPI {
         this.messages.push("user", this.chat_prompt.value);
         this.chat_prompt.value = "";
 
-        await this.messages.push_stream("assistant", this.getResponseStream())
+        try {
+            await this.messages.push_stream("assistant", this.getResponseStream());
+        } catch (err) {
+            console.error("Failed to stream response:", err);
+            if (err.cause !== undefined) console.log(err.cause);
+            return;
+        }
+
         this.chat_prompt.disabled = false;
         this.chat_prompt.focus();
     }
@@ -111,12 +124,12 @@ class ChatbotAPI {
             model: this.name,
             messages: this.messages.getMessages(),
             stream: true,
-        })
+        });
 
         let response = await fetch(this.completions_url, {
             method: "POST",
             body: body,
-        })
+        });
 
         if (!response.ok || !response.body) {
             console.error("Failed to start stream:", response.status, response.statusText);
@@ -144,13 +157,22 @@ class ChatbotAPI {
 
                 if (line === "[DONE]") return;
 
+                let json = null;
                 try {
-                    const json = JSON.parse(line);
-                    const delta = json.choices?.[0]?.delta?.content;
-                    if (delta) yield delta;
+                    json = JSON.parse(line);
                 } catch (err) {
                     console.log("Error parsing delta:", err, line);
+                    continue;
                 }
+                
+                // Catch error sent by the API
+                if (json.hasOwnProperty('error')) {
+                    const error = json.error;
+                    throw new Error(error.message, { cause: error });
+                }
+                
+                const delta = json.choices?.[0]?.delta?.content;
+                if (delta) yield delta;
             }
         }
     }

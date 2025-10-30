@@ -162,6 +162,11 @@ footer {
         background-color: #660000;
         align-self: flex-end;
     }
+    
+    .chat-message.error {
+        background-color: #aa0000;
+        align-self: center;
+    }
 
     .chat-prompt {
         display: flex;
