@@ -1,0 +1,66 @@
+aside.admonition {
+  border-radius: 6px;
+  border-left: 3px solid var(--color);
+  padding: 12px 12px 1px 12px;
+  margin: 24px 0;
+  background-color: var(--bg);
+  line-height: 1.5;
+}
+
+aside.admonition strong {
+  font-weight: 600;
+  color: var(--color);
+}
+
+aside.admonition strong::before {
+  content: var(--emoji);
+  padding-right: 6px;
+}
+
+aside.admonition strong::after {
+  content: ":";
+}
+
+aside.admonition em {
+  font-style: normal;
+  color: color-mix(in srgb, var(--color) 40%, #333 60%);
+  padding-left: 3px;
+}
+
+.admonition.note {
+  --color: #0969da;
+  --bg: #f6f8fa;
+  --emoji: "💡";
+}
+
+.admonition.tip,
+.admonition.hint {
+  --color: #1a7f37;
+  --bg: #f0fdf4;
+  --emoji: "🌱";
+}
+
+.admonition.important {
+  --color: #8250df;
+  --bg: #f6f0ff;
+  --emoji: "✨";
+}
+
+.admonition.warning,
+.admonition.attention {
+  --color: #9a6700;
+  --bg: #fff8e6;
+  --emoji: "⚠️";
+}
+
+.admonition.caution,
+.admonition.danger,
+.admonition.error {
+  --color: #d1242f;
+  --bg: #fff0f0;
+  --emoji: "🚩";
+}
+
+.admonition.error {
+  --emoji: "❌";
+}

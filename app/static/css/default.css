@@ -1,4 +1,5 @@
 main {
     max-width: 806px; /* 800 with padding */
     margin: 0 auto;
+    line-height: 1.25rem;
 }

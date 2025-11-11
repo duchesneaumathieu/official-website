@@ -1,0 +1,18 @@
+blockquote {
+  border-radius: 6px;
+  border-left: 3px solid #ccc;
+  padding: 1px 12px 1px 12px;
+  margin: 24px 12px;
+  background-color: #f9f9f9;
+  line-height: 1.5;
+}
+
+blockquote :first-child::before {
+  content: "“";
+  font-weight: 600;
+}
+
+blockquote :last-child::after {
+  content: "”";
+  font-weight: 600;
+}

@@ -51,7 +51,7 @@ CacheSettings = CacheSettings()
 
 @dataclass(frozen=True)
 class MarkdownSettings:
-    extras: tuple[str] = ("metadata", "markdown-in-html", "fenced-code-blocks", "latex", "wiki-tables")
+    extras: tuple[str] = ("metadata", "admonitions", "cuddled-lists", "strike", "markdown-in-html", "fenced-code-blocks", "latex", "tables")
 MarkdownSettings = MarkdownSettings()
 
 @dataclass(frozen=True)

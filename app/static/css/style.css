@@ -17,6 +17,15 @@ h1, h2, h3 {
     margin-bottom: 1rem;
 }
 
+p { 
+    code { /* This is for inline code */
+        background: #1d2331;
+        color: #D4D2C8;
+        padding: 1px 3px;
+        border-radius: 3px;
+    }
+}
+
 a {
     text-decoration: none;
 }

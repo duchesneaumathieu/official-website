@@ -1,0 +1,29 @@
+table {
+  margin: 24px auto;
+  border-collapse: collapse;
+}
+
+thead th {
+  font-weight: 600;
+  padding: 6px;
+  border-bottom: 2px solid #ccc;
+  color: #333;
+  background: #fafafa;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--table-border, #e5e7eb);
+  vertical-align: top;
+}
+
+/* Zebra striping for subtle readability */
+tbody tr:nth-child(even) {
+  background-color: var(--table-row-alt, #fafafa);
+}
+
+table {
+  border-radius: 6px;
+  overflow: hidden;
+}
