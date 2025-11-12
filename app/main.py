@@ -17,6 +17,9 @@ app = FastAPI(title=Settings.general.app_title)
 if Settings.general.serve_static:
     app.mount("/static", StaticFiles(directory=Settings.paths.static_dir), name="static")
 
+# These are mutable "static" files without version (should not be cached)
+app.mount("/assets", StaticFiles(directory=Settings.paths.assets_dir), name='assets')
+
 templates = Jinja2Templates(directory=Settings.paths.templates_dir)
 
 # Make url_for() generate HTTPS links behind a reverse proxy
