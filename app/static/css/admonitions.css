@@ -7,17 +7,17 @@ aside.admonition {
   line-height: 1.5;
 }
 
-aside.admonition strong {
+aside.admonition > strong:first-child {
   font-weight: 600;
   color: var(--color);
 }
 
-aside.admonition strong::before {
+aside.admonition > strong:first-child::before {
   content: var(--emoji);
   padding-right: 6px;
 }
 
-aside.admonition strong::after {
+aside.admonition > strong:first-child::after {
   content: ":";
 }
 
@@ -58,7 +58,7 @@ aside.admonition em {
 .admonition.error {
   --color: #d1242f;
   --bg: #fff0f0;
-  --emoji: "🚩";
+  --emoji: "🔥";
 }
 
 .admonition.error {
