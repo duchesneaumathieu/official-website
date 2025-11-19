@@ -17,13 +17,34 @@ h1, h2, h3 {
     margin-bottom: 1rem;
 }
 
-p { 
-    code { /* This is for inline code */
-        background: #1d2331;
-        color: #D4D2C8;
-        padding: 1px 3px;
-        border-radius: 3px;
-    }
+p {
+    margin: 12px 0;
+}
+
+/* Gluing p and ul together */
+p:has(+ ul) {
+  margin-bottom: 0;
+}
+
+ul {
+  margin-top: 0px;
+  margin-bottom: 12px;
+}
+
+li > p:first-child {
+  margin-top: 0;
+}
+
+li > p:last-child {
+  margin-bottom: 0;
+}
+
+/* inline code style */
+:not(pre) > code{ 
+    background: RGBA(0, 34, 128, 0.12);
+    color: #1d2331;
+    padding: 1px 3px;
+    border-radius: 3px;
 }
 
 a {
