@@ -1,0 +1,4 @@
+{% set nodes = paths.canonical.parts %}
+{% if nodes %}<p>{% for node in nodes %}{% if not loop.last %}<a href="/{{locale.lang}}/{{nodes[:loop.index] | join('/')}}">{{node}}</a> » {% else %}{{node}}{% endif %}{% endfor %}</p>{% endif %}
+
+{{ content.html | safe }}

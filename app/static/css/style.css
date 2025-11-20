@@ -13,8 +13,12 @@ body {
 
 h1, h2, h3 {
     color: #333;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin: 24px 0 12px;
+}
+
+main > h1:first-child {
+    text-align: center;
+    margin: 48px 0 12px;
 }
 
 p {
@@ -59,7 +63,6 @@ a:hover {
     flex-grow: 1; /* main takes all the empty space */
 
     margin-top: calc(1rem + 12px); /* making space for the header */
-    padding: 24px 6px;
 }
 
 /* gridbar3 is mainly for the header and the footer */

@@ -8,4 +8,10 @@
         {{ super() }}
     {% endif %}
 {% endblock %}
-{% block main %}{{ content.html | safe }}{% endblock %}
+{% block main %}
+    {% if content.type is defined and content.type == "blog" %}
+        {% include "partials/content-blog.html" %}
+    {% else %}
+        {{ content.html | safe }}
+    {% endif %}
+{% endblock %}

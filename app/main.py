@@ -41,8 +41,10 @@ async def serve(request: Request, raw_path: str):
     url_path = sanitize_url_path(raw_path) if raw_path else PurePosixPath("home")
     if url_path.parts[0] in Settings.general.languages:
         lang = url_path.parts[0]
+        canonical_path = url_path.relative_to(lang)
     else:
         lang = select_accept_language(request)
+        canonical_path = url_path
         url_path = lang / url_path
     
     resource = Resource(url_path)
@@ -56,12 +58,22 @@ async def serve(request: Request, raw_path: str):
     
     context = {
         "request": request,
+        "paths": { 
+            "localized": url_path,
+            "fallback": alt_url_path,
+            "canonical": canonical_path
+        },
         "locale": load_locale(f"{lang}/base.json"),
         "services": Settings.services,
     }
-    context["locale"]["switch_href"] = alt_url_path
     if resource.exists():
-        context["content"] = resource.html()
+        try:
+            context["content"] = resource.html()
+        except PermissionError as e:
+            raise HTTPException(
+                status_code=403,
+                detail="You do not have permission to access this resource."
+            ) from e
         return templates.TemplateResponse("content.html", context, status_code=200)
 
     if content_found:

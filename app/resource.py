@@ -99,7 +99,7 @@ class Resource:
         markdown = self.markdown()
         html = markdown2.markdown(markdown, extras=Settings.markdown.extras)
         
-        if html.metadata.get("usage") != "content":
-            raise RuntimeError("File is not content")
+        if html.metadata.get("scope") != "public":
+            raise PermissionError("Ressource is not publicly available.")
         
         return {"html": html, **html.metadata}
